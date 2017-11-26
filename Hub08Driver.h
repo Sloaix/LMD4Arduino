@@ -2,6 +2,7 @@
 #define Hub08Driver_h
 
 #include <Arduino.h>
+#include <BufferCanvas.h>
 #include <SPI.h>
 
 class Hub08Driver
@@ -19,12 +20,14 @@ private:
   bool isEnable = true;
   bool isDebug = true;
   bool isReverse = false;
+  BufferCanvas *canvas;
 
   //LED单元的边长,HL-M1388BR或者1088AS
   const int LED_UNIT_SIDE_SIZE = 8;
 
   void init();
 
+  //重置行
   void resetScanLine();
 
   //从指定的行获取指定位置的byte数据
@@ -48,6 +51,9 @@ public:
   //高度必定是16,目前不支持垂直级联，只支持横向级联处理
   //r1=>mosi,stb=>any out pin,ck=>sck
   Hub08Driver(int horizontalUnitSize, int pinOE, int pinLA, int pinLB, int pinLC, int pinLD, int pinSTB);
+
+  //获取画布
+  BufferCanvas *getCanvas();
 
   //开启LED模块
   void switchOn();

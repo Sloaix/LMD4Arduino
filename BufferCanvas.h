@@ -18,6 +18,23 @@ private:
 
   void init();
 
+  int getBufferSize();
+
+public:
+  BufferCanvas(byte *buffer, int width, int height);
+
+  int getWidth();
+
+  int getHeight();
+
+  int getHorizontalUnitSize();
+
+  void clear();
+
+  void full();
+
+  void reverse();
+
   void drawPixel(int x, int y);
 
   void drawLine(int startX, int startY, int endX, int endY);
@@ -63,9 +80,6 @@ private:
   void flipHorizontal();
 
   void flipVertical();
-
-public:
-  BufferCanvas(byte *buffer, int width, int height);
 };
 
 #endif //BufferCanvas.h

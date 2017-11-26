@@ -1,4 +1,5 @@
 #include "Hub08Driver.h"
+#include <BufferCanvas.h>
 
 Hub08Driver::Hub08Driver(int horizontalUnitSize, int pinOE, int pinLA, int pinLB, int pinLC, int pinLD, int pinSTB)
 {
@@ -10,6 +11,7 @@ Hub08Driver::Hub08Driver(int horizontalUnitSize, int pinOE, int pinLA, int pinLB
     this->pinLD = pinLD;
     this->pinSTB = pinSTB;
     this->buffer = new byte[horizontalUnitSize * 16]{0};
+    this->canvas = new BufferCanvas(this->buffer, horizontalUnitSize * 8, 16);
     init();
 }
 
@@ -31,6 +33,11 @@ void Hub08Driver::init()
     pinMode(pinSTB, OUTPUT);
 
     debug("init finish");
+}
+
+BufferCanvas *Hub08Driver::getCanvas()
+{
+    return this->canvas;
 }
 
 void Hub08Driver::resetScanLine()
