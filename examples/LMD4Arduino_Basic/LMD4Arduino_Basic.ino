@@ -2,6 +2,7 @@
 #include <TimerOne.h>
 #include <SPI.h>
 #include <Hub08Driver.h>
+
 byte eyupa1[] = {
     B00000000, B00000000, B00000000, B00000000, B00000000, B00001111, B00000000, B00000000,
     B00000000, B00000000, B00000000, B00000000, B00000000, B00001111, B00000000, B00000000,
@@ -38,20 +39,26 @@ byte eyupa2[] = {
     B00000000, B00000000, B00000011, B11100011, B11000111, B11000111, B10000000, B00000000,
     B00000000, B00000000, B00000001, B11100011, B10000011, B11000111, B00000000, B00000000};
 
-Hub08Driver driver = Hub08Driver(8, eyupa1, 3, 4, 5, 6, 7, 8);
+Hub08Driver driver = Hub08Driver(8, 3, 4, 5, 6, 7, 8);
 
 void setup()
 {
     Serial.begin(115200);
-    Timer1.initialize(500);
+    Timer1.initialize(300);
     Timer1.attachInterrupt(timeHandler);
+
+    delay(1000);
+    driver.full();
+    delay(1000);
+    driver.clear();
+    delay(1000);
 }
 
 void loop()
 {
-    driver.setBuffer(eyupa2);
+    driver.draw(eyupa1);
     delay(500);
-    driver.setBuffer(eyupa1);
+    driver.draw(eyupa2);
     delay(500);
 }
 

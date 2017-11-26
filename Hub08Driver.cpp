@@ -1,15 +1,15 @@
 #include "Hub08Driver.h"
 
-Hub08Driver::Hub08Driver(int horizontalUnitCascadeSize, byte *buffer, int pinOE, int pinLA, int pinLB, int pinLC, int pinLD, int pinSTB)
+Hub08Driver::Hub08Driver(int horizontalUnitSize, int pinOE, int pinLA, int pinLB, int pinLC, int pinLD, int pinSTB)
 {
-    this->horizontalUnitCascadeSize = horizontalUnitCascadeSize;
-    this->buffer = buffer;
+    this->horizontalUnitSize = horizontalUnitSize;
     this->pinOE = pinOE;
     this->pinLA = pinLA;
     this->pinLB = pinLB;
     this->pinLC = pinLC;
     this->pinLD = pinLD;
     this->pinSTB = pinSTB;
+    this->buffer = new byte[horizontalUnitSize * 16]{0};
     init();
 }
 
@@ -33,6 +33,16 @@ void Hub08Driver::init()
     debug("init finish");
 }
 
+void Hub08Driver::resetScanLine()
+{
+    this->scanLineIndex = 0;
+}
+
+int Hub08Driver::getBufferSize()
+{
+    return this->horizontalUnitSize * 16;
+}
+
 void Hub08Driver::reverse()
 {
     debug("reverse the buffer");
@@ -41,19 +51,18 @@ void Hub08Driver::reverse()
 
 void Hub08Driver::clear()
 {
-    byte off = 0x00;
-    for (int i = 0; i < sizeof(this->buffer); i++)
+
+    for (int i = 0; i < getBufferSize(); i++)
     {
-        this->buffer[i] = off;
+        this->buffer[i] = 0x00;
     }
 }
 
 void Hub08Driver::full()
 {
-    byte on = 0xff;
-    for (int i = 0; i < sizeof(this->buffer); i++)
+    for (int i = 0; i < getBufferSize(); i++)
     {
-        this->buffer[i] = on;
+        this->buffer[i] = 0xff;
     }
 }
 
@@ -86,7 +95,7 @@ void Hub08Driver::scanLine()
 void Hub08Driver::pickColumns(int lineIndex)
 {
     //遍历每行的小led模块数
-    for (int byteIndex = 0; byteIndex < this->horizontalUnitCascadeSize; byteIndex++)
+    for (int byteIndex = 0; byteIndex < this->horizontalUnitSize; byteIndex++)
     {
         //一个字节的二进制形式可以控制8个led像素点
         byte byteOf8pixels = ~getByteOfLine(lineIndex, byteIndex);
@@ -109,10 +118,10 @@ byte Hub08Driver::getByteOfLine(int lineIndex, int byteIndex)
 void Hub08Driver::pickLine(int line)
 {
     //LA是最低位,LD最高位
-    digitalWrite(this->pinLA, line & 0x01);
-    digitalWrite(this->pinLB, line & 0x02);
-    digitalWrite(this->pinLC, line & 0x04);
-    digitalWrite(this->pinLD, line & 0x08);
+    digitalWrite(this->pinLA, bitRead(line, 0));
+    digitalWrite(this->pinLB, bitRead(line, 1));
+    digitalWrite(this->pinLC, bitRead(line, 2));
+    digitalWrite(this->pinLD, bitRead(line, 3));
 }
 
 void Hub08Driver::switchOn()
@@ -139,9 +148,9 @@ void Hub08Driver::switchOff()
     this->isEnable = false;
 }
 
-void Hub08Driver::setBuffer(byte *buffer)
+void Hub08Driver::draw(byte *buffer)
 {
-    this->buffer = buffer;
+    memcpy(this->buffer, buffer, getBufferSize());
 }
 
 byte *Hub08Driver::getBuffer()
