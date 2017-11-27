@@ -52,7 +52,6 @@ int Hub08Driver::getBufferSize()
 
 void Hub08Driver::reverse()
 {
-    debug("reverse the buffer");
     this->isReverse = !this->isReverse;
 }
 

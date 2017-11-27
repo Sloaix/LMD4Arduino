@@ -20,6 +20,10 @@ private:
 
   int getBufferSize();
 
+  void shiftRightByteArray(int start, int end,bool circular);
+
+  void shiftLeftByteArray(int start, int end,bool circular);
+
 public:
   BufferCanvas(byte *buffer, int width, int height);
 

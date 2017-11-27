@@ -39,31 +39,30 @@ byte eyupa2[] = {
     B00000000, B00000000, B00000011, B11100011, B11000111, B11000111, B10000000, B00000000,
     B00000000, B00000000, B00000001, B11100011, B10000011, B11000111, B00000000, B00000000};
 Hub08Driver *driver;
-
+BufferCanvas *canvas;
 void setup()
 {
     Serial.begin(115200);
 
     driver = new Hub08Driver(8, 3, 4, 5, 6, 7, 8);
 
-    Timer1.initialize(300);
+    Timer1.initialize(200);
     Timer1.attachInterrupt(timeHandler);
 
-    BufferCanvas *canvas = driver->getCanvas();
+    canvas = driver->getCanvas();
 
     delay(1000);
     canvas->full();
     delay(1000);
     canvas->clear();
     delay(1000);
+    driver->draw(eyupa1);
 }
 
 void loop()
 {
-    driver->draw(eyupa1);
-    delay(500);
-    driver->draw(eyupa2);
-    delay(500);
+    canvas->shiftRight(1, true);
+    delay(20);
 }
 
 void timeHandler()
