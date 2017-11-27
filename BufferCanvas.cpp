@@ -1,84 +1,85 @@
 #include "BufferCanvas.h"
 
-BufferCanvas::BufferCanvas(byte *buffer, int width, int height)
+BufferCanvas::BufferCanvas(byte *buffer, int bufferSize, int width, int height)
 {
     this->buffer = buffer;
+    this->bufferSize = bufferSize;
     this->width = width;
     this->height = height;
-    this->horizontalUnitSize = width / 8;
+    this->column = width / 8;
+}
+
+static void BufferCanvas::shiftLineRight(byte *buffer, int start, int end, bool circular)
+{
+    int lowBitOfHeadByte = bitRead(buffer[end], 0); //获取尾字节的最低位bit
+
+    for (int i = end; i >= start; i--)
+    {
+        buffer[i] >>= 1; //当前字节右移一位
+        if (i != start)
+        {
+            int lowBitOfNextByte = 0;
+            lowBitOfNextByte = bitRead(buffer[i - 1], 0); //获取上一个字节的最低位bit
+            bitWrite(buffer[i], 7, lowBitOfNextByte);     //把获取到的下一个字节高位覆盖到当前字节的最低位
+        }
+    }
+
+    bitWrite(buffer[start], 7, lowBitOfHeadByte);
+}
+
+static void BufferCanvas::shiftLineLeft(byte *buffer, int start, int end, bool circular)
+{
+    int highBitOfHeadByte = bitRead(buffer[start], 7); //获取头字节的最高位bit
+
+    for (int i = start; i <= end; i++)
+    {
+        buffer[i] <<= 1; //当前字节左移一位
+
+        if (i != end)
+        {
+            int highBitOfNextByte = 0;
+            highBitOfNextByte = bitRead(buffer[i + 1], 7); //获取下一个字节的最高位bit
+            bitWrite(buffer[i], 0, highBitOfNextByte);     //把获取到的下一个字节高位覆盖到当前字节的最低位
+        }
+    }
+
+    bitWrite(buffer[end], 0, highBitOfHeadByte);
+}
+
+static void BufferCanvas::shiftBufferRight(byte *buffer, int size, int distance, int bytesNumberEachLine, bool circular)
+{
+    while (distance--)
+    {
+        for (int i = 0; i < size; i += bytesNumberEachLine)
+        {
+            int start = 0 + i;
+            int end = 7 + i;
+            shiftLineRight(buffer, start, end, circular);
+        }
+    }
+}
+
+static void BufferCanvas::shiftBufferLeft(byte *buffer, int size, int distance, int bytesNumberEachLine, bool circular)
+{
+    while (distance--)
+    {
+        for (int i = 0; i < size; i += bytesNumberEachLine)
+        {
+            int start = 0 + i;
+            int end = 7 + i;
+            shiftLineLeft(buffer, start, end, circular);
+        }
+    }
 }
 
 void BufferCanvas::shiftLeft(int distance, bool circular)
 {
-    for (int i = 0; i < 16; i++)
-    {
-        int start = 0 + 8 * i;
-        int end = 7 + 8 * i;
-        shiftLeftByteArray(start, end, circular);
-    }
+    BufferCanvas::shiftBufferLeft(this->buffer, this->bufferSize, distance, this->column, circular);
 }
 
 void BufferCanvas::shiftRight(int distance, bool circular)
 {
-    for (int i = 0; i < 16; i++)
-    {
-        int start = 0 + 8 * i;
-        int end = 7 + 8 * i;
-        shiftRightByteArray(start, end, circular);
-    }
-}
-
-void BufferCanvas::shiftLeftByteArray(int start, int end, bool circular)
-{
-    int highBitOfHeadByte = (this->buffer[start] & 0x80) == 0x80 ? 1 : 0; //获取头字节的最高位bit
-
-    for (int i = start; i <= end; i++)
-    {
-        int highBitOfNextByte = 0;
-
-        if (i != end)
-        {
-            highBitOfNextByte = (this->buffer[i + 1] & 0x80) == 0x80 ? 1 : 0; //获取下一个字节的最高位bit
-        }
-
-        this->buffer[i] <<= 1; //当前字节左移一位
-
-        this->buffer[i] |= highBitOfNextByte; //把获取到的下一个字节高位覆盖到当前字节的最低位
-
-        //当遍历到最后一个字节时候
-        if (circular && i == end)
-        {
-            this->buffer[i] |= highBitOfHeadByte; //将头字节的最高位，放入移位后的尾字节的最低位
-        }
-    }
-}
-
-void BufferCanvas::shiftRightByteArray(int start, int end, bool circular)
-{
-    byte *bytes = this->buffer;
-    int lowBitOfEndByte = (bytes[end] & 0x01) == 0x01 ? 1 : 0; //获取尾字节的最低位bit
-
-    for (int i = end; i >= start; i--)
-    {
-
-        int lowBitOfNextByte = 0;
-
-        if (i - 1 >= start)
-        {
-            lowBitOfNextByte = (bytes[i - 1] & 0x01) == 0x01 ? 1 : 0; //获取下一个字节的最低位
-        }
-
-        bytes[i] >>= 1; //当前字节右移一位
-
-        //把获取到的下一个字节低位覆盖到当前字节的最高位
-        bytes[i] ^= (-lowBitOfNextByte ^ bytes[i]) & (1UL << 7);
-
-        //当遍历到最后一个字节时候
-        if (circular && i == start)
-        {
-            bytes[start] ^= (-lowBitOfEndByte ^ bytes[start]) & (1UL << 7); //将尾字节的最低位，放入移位后的头字节的最高位
-        }
-    }
+    BufferCanvas::shiftBufferRight(this->buffer, this->bufferSize, distance, this->column, circular);
 }
 
 int BufferCanvas::getWidth()
@@ -93,7 +94,7 @@ int BufferCanvas::getHeight()
 
 void BufferCanvas::clear()
 {
-    for (int i = 0; i < getBufferSize(); i++)
+    for (int i = 0; i < this->bufferSize; i++)
     {
         this->buffer[i] = 0x00;
     }
@@ -101,25 +102,15 @@ void BufferCanvas::clear()
 
 void BufferCanvas::full()
 {
-    for (int i = 0; i < getBufferSize(); i++)
+    for (int i = 0; i < this->bufferSize; i++)
     {
         this->buffer[i] = 0xff;
     }
 }
 
-int BufferCanvas::getBufferSize()
-{
-    return this->horizontalUnitSize * this->height;
-}
-
-int BufferCanvas::getHorizontalUnitSize()
-{
-    return this->horizontalUnitSize;
-}
-
 void BufferCanvas::reverse()
 {
-    for (int i = 0; i < getBufferSize(); i++)
+    for (int i = 0; i < this->bufferSize; i++)
     {
         this->buffer[i] = ~this->buffer[i];
     }

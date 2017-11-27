@@ -40,32 +40,78 @@ byte eyupa2[] = {
     B00000000, B00000000, B00000001, B11100011, B10000011, B11000111, B00000000, B00000000};
 Hub08Driver *driver;
 BufferCanvas *canvas;
+
+byte test[] = {B11110000, B11110000};
 void setup()
 {
     Serial.begin(115200);
 
     driver = new Hub08Driver(8, 3, 4, 5, 6, 7, 8);
 
-    Timer1.initialize(200);
+    Timer1.initialize(1000);
     Timer1.attachInterrupt(timeHandler);
 
     canvas = driver->getCanvas();
 
-    delay(1000);
+    delay(500);
     canvas->full();
-    delay(1000);
+    delay(500);
     canvas->clear();
-    delay(1000);
+    delay(500);
     driver->draw(eyupa1);
+
+    Serial.println(canvas->bufferSize);
+    // canvas->shiftLeft(1, false);
+    Serial.println(canvas->bufferSize);
+}
+
+void testShift()
+{
+    printBinary(test[0]);
+    printBinary(test[1]);
+    Serial.println("");
+
+    BufferCanvas::shiftLineRight(test, 0, 1, true);
+
+    printBinary(test[0]);
+    printBinary(test[1]);
+    Serial.println("");
+
+    BufferCanvas::shiftLineRight(test, 0, 1, true);
+
+    printBinary(test[0]);
+    printBinary(test[1]);
+    Serial.println("");
+
+    BufferCanvas::shiftLineLeft(test, 0, 1, true);
+
+    printBinary(test[0]);
+    printBinary(test[1]);
+    Serial.println("");
+
+    BufferCanvas::shiftLineLeft(test, 0, 1, true);
+
+    printBinary(test[0]);
+    printBinary(test[1]);
+    Serial.println("");
 }
 
 void loop()
 {
     canvas->shiftRight(1, true);
-    delay(20);
+    // canvas->shiftLeft(1, true);
+    delay(50);
 }
 
 void timeHandler()
 {
     driver->scanLine();
+}
+
+void printBinary(byte inByte)
+{
+    for (int b = 7; b >= 0; b--)
+    {
+        Serial.print(bitRead(inByte, b));
+    }
 }

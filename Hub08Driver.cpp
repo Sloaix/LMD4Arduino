@@ -11,7 +11,7 @@ Hub08Driver::Hub08Driver(int horizontalUnitSize, int pinOE, int pinLA, int pinLB
     this->pinLD = pinLD;
     this->pinSTB = pinSTB;
     this->buffer = new byte[horizontalUnitSize * 16]{0};
-    this->canvas = new BufferCanvas(this->buffer, horizontalUnitSize * 8, 16);
+    this->canvas = new BufferCanvas(this->buffer, horizontalUnitSize * 16, horizontalUnitSize * 8, 16);
     init();
 }
 
@@ -31,8 +31,6 @@ void Hub08Driver::init()
     pinMode(pinLC, OUTPUT);
     pinMode(pinLD, OUTPUT);
     pinMode(pinSTB, OUTPUT);
-
-    debug("init finish");
 }
 
 BufferCanvas *Hub08Driver::getCanvas()

@@ -2,7 +2,6 @@
 #define BufferCanvas_h
 
 #include <Arduino.h>
-
 /**
  * BufferCanvas，可以在指定宽高的Buffer上使用更多方法绘制1bit位图
  */
@@ -11,27 +10,29 @@ class BufferCanvas
 private:
   const int MODE_FILL = 0x00;
   const int MODE_CLEAR = MODE_FILL << 1;
-  byte *buffer;
   int width;
   int height;
-  int horizontalUnitSize;
+  int column;
+  byte *buffer;
 
   void init();
 
-  int getBufferSize();
-
-  void shiftRightByteArray(int start, int end,bool circular);
-
-  void shiftLeftByteArray(int start, int end,bool circular);
-
 public:
-  BufferCanvas(byte *buffer, int width, int height);
+  int bufferSize;
+
+  BufferCanvas(byte *buffer, int bufferSize, int width, int height);
+
+  static void shiftLineRight(byte *buffer, int start, int end, bool circular);
+
+  static void shiftLineLeft(byte *buffer, int start, int end, bool circular);
+
+  static void shiftBufferRight(byte *buffer, int size, int distance, int bytesNumberEachLine, bool circular);
+
+  static void shiftBufferLeft(byte *buffer, int size, int distance, int bytesNumberEachLine, bool circular);
 
   int getWidth();
 
   int getHeight();
-
-  int getHorizontalUnitSize();
 
   void clear();
 
