@@ -1,0 +1,5 @@
+{
+    "board": "arduino:avr:uno",
+    "port": "/dev/cu.usbmodem1421",
+    "sketch": "examples/LMD4Arduino_Basic/LMD4Arduino_Basic.ino"
+}
