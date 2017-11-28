@@ -48,70 +48,21 @@ void setup()
 
     driver = new Hub08Driver(8, 3, 4, 5, 6, 7, 8);
 
-    Timer1.initialize(1000);
+    Timer1.initialize(200);
     Timer1.attachInterrupt(timeHandler);
 
     canvas = driver->getCanvas();
 
-    delay(500);
-    canvas->full();
-    delay(500);
-    canvas->clear();
-    delay(500);
     driver->draw(eyupa1);
-
-    Serial.println(canvas->bufferSize);
-    // canvas->shiftLeft(1, false);
-    Serial.println(canvas->bufferSize);
-}
-
-void testShift()
-{
-    printBinary(test[0]);
-    printBinary(test[1]);
-    Serial.println("");
-
-    BufferCanvas::shiftLineRight(test, 0, 1, true);
-
-    printBinary(test[0]);
-    printBinary(test[1]);
-    Serial.println("");
-
-    BufferCanvas::shiftLineRight(test, 0, 1, true);
-
-    printBinary(test[0]);
-    printBinary(test[1]);
-    Serial.println("");
-
-    BufferCanvas::shiftLineLeft(test, 0, 1, true);
-
-    printBinary(test[0]);
-    printBinary(test[1]);
-    Serial.println("");
-
-    BufferCanvas::shiftLineLeft(test, 0, 1, true);
-
-    printBinary(test[0]);
-    printBinary(test[1]);
-    Serial.println("");
 }
 
 void loop()
 {
     canvas->shiftRight(1, true);
-    // canvas->shiftLeft(1, true);
-    delay(50);
+    delay(20);
 }
 
 void timeHandler()
 {
     driver->scanLine();
-}
-
-void printBinary(byte inByte)
-{
-    for (int b = 7; b >= 0; b--)
-    {
-        Serial.print(bitRead(inByte, b));
-    }
 }
