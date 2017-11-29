@@ -19,17 +19,36 @@ void setup()
     //初始线长度
     int length = 1;
 
-    //用线画一个直角三角形
+    //用横线画一个直角三角形
     for (int i = 0; i < 16; i++)
     {
         canvas->drawHorizontalLine(0, i, length++);
+    }
+
+    length = 1;
+    //用竖线画一个直角三角形
+    for (int i = 0; i < 16; i++)
+    {
+        canvas->drawVerticalLine(i + 16, 0, length++);
+    }
+
+    length = 1;
+    //用横线画一个直角三角形
+    for (int i = 0; i < 16; i++)
+    {
+        canvas->drawHorizontalLine(32, i, length++);
+    }
+
+    length = 1;
+    //用竖线画一个直角三角形
+    for (int i = 0; i < 16; i++)
+    {
+        canvas->drawVerticalLine(i + 48, 0, length++);
     }
 }
 
 void loop()
 {
-    canvas->shiftRight(1, true);
-    delay(20);
 }
 
 void timeHandler()
