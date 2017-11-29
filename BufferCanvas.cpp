@@ -155,13 +155,11 @@ void BufferCanvas::drawHorizontalLine(int startX, int startY, int length)
 {
     if (!containPixel(startX, startY))
     {
-        Serial.println("起点不在屏幕内");
         return;
     }
 
     if (!containPixel(startX + length - 1, startY))
     {
-        Serial.println("终点不在屏幕内");
         return;
     }
 
@@ -186,6 +184,14 @@ void BufferCanvas::drawVerticalLine(int startX, int startY, int length)
     for (int i = 0; i < length; i++)
     {
         drawPixel(startX, i + startY);
+    }
+}
+
+void BufferCanvas::drawRect(int startX, int startY, int width, int height)
+{
+    for (int i = 0; i < height; i++)
+    {
+        drawHorizontalLine(startX, startY + i, width);
     }
 }
 

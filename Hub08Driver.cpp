@@ -17,11 +17,6 @@ Hub08Driver::Hub08Driver(int horizontalUnitSize, int pinOE, int pinLA, int pinLB
 
 void Hub08Driver::init()
 {
-    // if (this->isDebug)
-    // {
-    //     Serial.begin(9600);
-    // }
-
     SPI.begin();
 
     //都设置为输出模式
