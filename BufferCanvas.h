@@ -16,6 +16,9 @@ private:
   byte *buffer;
 
   void init();
+  void setPixelState(int x, int y, int bit);
+
+  bool containPixel(int x, int y);
 
 public:
   int bufferSize;
@@ -41,6 +44,8 @@ public:
   void reverse();
 
   void drawPixel(int x, int y);
+
+  void clearPixel(int x, int y);
 
   void drawLine(int startX, int startY, int endX, int endY);
 

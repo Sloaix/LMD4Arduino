@@ -115,6 +115,59 @@ void BufferCanvas::reverse()
         this->buffer[i] = ~this->buffer[i];
     }
 }
+bool BufferCanvas::containPixel(int x, int y)
+{
+    if (x < 0 || x > this->width)
+    {
+        return false;
+    }
+
+    if (x < 0 || y > this->height)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+void BufferCanvas::setPixelState(int x, int y, int bit)
+{
+    //计算点在字节中的bit位置,从右到左
+    int bitIndex = 7 - x % 8;
+
+    //计算字节的处于Buffer中的下标
+    int byteIndex = x / 8 + y * this->column;
+
+    //设置bit位为1
+    bitWrite(this->buffer[byteIndex], bitIndex, bit);
+}
+
+void BufferCanvas::drawPixel(int x, int y)
+{
+    setPixelState(x, y, 1);
+}
+void BufferCanvas::clearPixel(int x, int y)
+{
+    setPixelState(x, y, 0);
+}
+
+void BufferCanvas::drawHorizontalLine(int startX, int startY, int length)
+{
+    if (!containPixel(startX, startY))
+    {
+        return;
+    }
+
+    if (length + startX > this->width)
+    {
+        return;
+    }
+
+    for (int i = startX; i < length; i++)
+    {
+        drawPixel(i, startY);
+    }
+}
 
 void BufferCanvas::drawLine(int startX, int startY, int endX, int endY)
 {

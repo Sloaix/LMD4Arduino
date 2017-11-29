@@ -41,7 +41,6 @@ byte eyupa2[] = {
 Hub08Driver *driver;
 BufferCanvas *canvas;
 
-byte test[] = {B11110000, B11110000};
 void setup()
 {
     Serial.begin(115200);
