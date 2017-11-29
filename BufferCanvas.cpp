@@ -195,6 +195,10 @@ void BufferCanvas::drawRect(int startX, int startY, int width, int height)
     }
 }
 
+void BufferCanvas::drawBorderRect(int startX, int startY, int width, int height, int thikness)
+{
+}
+
 void BufferCanvas::drawLine(int startX, int startY, int endX, int endY)
 {
 }

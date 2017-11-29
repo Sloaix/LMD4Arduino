@@ -45,9 +45,6 @@ void setup()
     {
         canvas->drawVerticalLine(i + 48, 0, length++);
     }
-
-    canvas->clear();
-    canvas->drawRect(4, 4, 4, 4);
 }
 
 void loop()
