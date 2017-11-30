@@ -57,6 +57,8 @@ public:
 
   void drawBorderRect(int x, int y, int width, int height, int thikness);
 
+  void drawBorderRect(int x, int y, int width, int height);
+
   void drawOverlay(byte *buffer, int byteNumEachLine);
 
   void drawBuffer(byte *buffer, int byteNumEachLine);

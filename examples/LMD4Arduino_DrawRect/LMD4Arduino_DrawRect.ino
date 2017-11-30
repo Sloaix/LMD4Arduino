@@ -15,12 +15,44 @@ void setup()
     Timer1.attachInterrupt(timeHandler);
 
     canvas = driver->getCanvas();
-
-    canvas->drawRect(4, 4, 20, 10);
 }
 
 void loop()
 {
+
+    canvas->drawRect(0, 0, 8, 8);
+
+    delay(500);
+
+    canvas->drawBorderRect(9, 0, 8, 8);
+
+    delay(500);
+
+    canvas->drawBorderRect(18, 0, 8, 8, 2);
+
+    delay(500);
+
+    canvas->drawBorderRect(27, 0, 8, 8, 3);
+
+    delay(500);
+
+    for (int thikness = 0; thikness < 5; thikness++)
+    {
+        canvas->drawBorderRect(36, 0, 8, 8, thikness);
+        delay(300);
+    }
+
+    canvas->clear();
+
+    for (int thikness = 0; thikness < 7; thikness++)
+    {
+        canvas->drawBorderRect(0, 0, 64, 16, thikness);
+        delay(100);
+    }
+
+    delay(1000);
+
+    canvas->clear();
 }
 
 void timeHandler()

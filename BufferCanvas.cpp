@@ -197,6 +197,21 @@ void BufferCanvas::drawRect(int startX, int startY, int width, int height)
 
 void BufferCanvas::drawBorderRect(int startX, int startY, int width, int height, int thikness)
 {
+    thikness = min(max(width, height), max(1, thikness));
+
+    for (int i = 0; i < thikness; i++)
+    {
+        drawHorizontalLine(startX, startY + i, width);
+        drawHorizontalLine(startX, startY + height - 1 - i, width);
+
+        drawVerticalLine(startX + i, startY, height);
+        drawVerticalLine(startX + width - 1 - i, startY, height);
+    }
+}
+
+void BufferCanvas::drawBorderRect(int startX, int startY, int width, int height)
+{
+    drawBorderRect(startX, startY, width, height, 1);
 }
 
 void BufferCanvas::drawLine(int startX, int startY, int endX, int endY)
