@@ -9,25 +9,8 @@ BufferCanvas::BufferCanvas(byte *buffer, int bufferSize, int width, int height)
     this->column = width / 8;
 }
 
-static void BufferCanvas::shiftLineRight(byte *buffer, int start, int end, bool circular)
-{
-    int lowBitOfHeadByte = bitRead(buffer[end], 0); //获取尾字节的最低位bit
-
-    for (int i = end; i >= start; i--)
-    {
-        buffer[i] >>= 1; //当前字节右移一位
-        if (i != start)
-        {
-            int lowBitOfNextByte = 0;
-            lowBitOfNextByte = bitRead(buffer[i - 1], 0); //获取上一个字节的最低位bit
-            bitWrite(buffer[i], 7, lowBitOfNextByte);     //把获取到的下一个字节高位覆盖到当前字节的最低位
-        }
-    }
-
-    bitWrite(buffer[start], 7, lowBitOfHeadByte);
-}
-
-static void BufferCanvas::shiftLineLeft(byte *buffer, int start, int end, bool circular)
+//水平直线左移
+static void BufferCanvas::shiftHorizontalLineLeft(byte *buffer, int start, int end, bool circular)
 {
     int highBitOfHeadByte = bitRead(buffer[start], 7); //获取头字节的最高位bit
 
@@ -46,17 +29,34 @@ static void BufferCanvas::shiftLineLeft(byte *buffer, int start, int end, bool c
     bitWrite(buffer[end], 0, highBitOfHeadByte);
 }
 
-static void BufferCanvas::shiftBufferRight(byte *buffer, int size, int distance, int bytesNumberEachLine, bool circular)
+//水平直线右移
+static void BufferCanvas::shiftHorizontalLineRight(byte *buffer, int start, int end, bool circular)
 {
-    while (distance--)
+    int lowBitOfHeadByte = bitRead(buffer[end], 0); //获取尾字节的最低位bit
+
+    for (int i = end; i >= start; i--)
     {
-        for (int i = 0; i < size; i += bytesNumberEachLine)
+        buffer[i] >>= 1; //当前字节右移一位
+        if (i != start)
         {
-            int start = 0 + i;
-            int end = 7 + i;
-            shiftLineRight(buffer, start, end, circular);
+            int lowBitOfNextByte = 0;
+            lowBitOfNextByte = bitRead(buffer[i - 1], 0); //获取上一个字节的最低位bit
+            bitWrite(buffer[i], 7, lowBitOfNextByte);     //把获取到的下一个字节高位覆盖到当前字节的最低位
         }
     }
+
+    bitWrite(buffer[start], 7, lowBitOfHeadByte);
+}
+
+//垂直线上移一位
+static void BufferCanvas::shiftVerticalLineUp(byte *buffer, int start, int end, bool circular)
+{
+}
+
+//垂直线下移一位
+static void BufferCanvas::shiftVerticalLineDown(byte *buffer, int start, int end, bool circular)
+{
+    
 }
 
 static void BufferCanvas::shiftBufferLeft(byte *buffer, int size, int distance, int bytesNumberEachLine, bool circular)
@@ -67,7 +67,45 @@ static void BufferCanvas::shiftBufferLeft(byte *buffer, int size, int distance, 
         {
             int start = 0 + i;
             int end = 7 + i;
-            shiftLineLeft(buffer, start, end, circular);
+            shiftHorizontalLineLeft(buffer, start, end, circular);
+        }
+    }
+}
+static void BufferCanvas::shiftBufferRight(byte *buffer, int size, int distance, int bytesNumberEachLine, bool circular)
+{
+    while (distance--)
+    {
+        for (int i = 0; i < size; i += bytesNumberEachLine)
+        {
+            int start = 0 + i;
+            int end = 7 + i;
+            shiftHorizontalLineRight(buffer, start, end, circular);
+        }
+    }
+}
+
+static void BufferCanvas::shiftBufferUp(byte *buffer, int size, int distance, int bytesNumberEachLine, bool circular)
+{
+    while (distance--)
+    {
+        for (int i = 0; i < size; i += bytesNumberEachLine)
+        {
+            int start = 0 + i;
+            int end = 7 + i;
+            shiftLineUp(buffer, start, end, circular);
+        }
+    }
+}
+
+static void BufferCanvas::shiftBufferDown(byte *buffer, int size, int distance, int bytesNumberEachLine, bool circular)
+{
+    while (distance--)
+    {
+        for (int i = 0; i < size; i += bytesNumberEachLine)
+        {
+            int start = 0 + i;
+            int end = 7 + i;
+            shiftLineDown(buffer, start, end, circular);
         }
     }
 }
@@ -80,6 +118,14 @@ void BufferCanvas::shiftLeft(int distance, bool circular)
 void BufferCanvas::shiftRight(int distance, bool circular)
 {
     BufferCanvas::shiftBufferRight(this->buffer, this->bufferSize, distance, this->column, circular);
+}
+
+void BufferCanvas::shiftUp(int distance, bool circular)
+{
+}
+
+void BufferCanvas::shiftDown(int distance, bool circular)
+{
 }
 
 int BufferCanvas::getWidth()

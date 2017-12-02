@@ -25,9 +25,17 @@ public:
 
   BufferCanvas(byte *buffer, int bufferSize, int width, int height);
 
-  static void shiftLineRight(byte *buffer, int start, int end, bool circular);
+  static void shiftVerticalLineUp(byte *buffer, int start, int end, bool circular);
 
-  static void shiftLineLeft(byte *buffer, int start, int end, bool circular);
+  static void shiftVerticalLineDown(byte *buffer, int start, int end, bool circular);
+
+  static void shiftHorizontalLineRight(byte *buffer, int start, int end, bool circular);
+
+  static void shiftHorizontalLineLeft(byte *buffer, int start, int end, bool circular);
+
+  static void shiftBufferUp(byte *buffer, int size, int distance, int bytesNumberEachLine, bool circular);
+
+  static void shiftBufferDown(byte *buffer, int size, int distance, int bytesNumberEachLine, bool circular);
 
   static void shiftBufferRight(byte *buffer, int size, int distance, int bytesNumberEachLine, bool circular);
 
