@@ -51,12 +51,26 @@ static void BufferCanvas::shiftHorizontalLineRight(byte *buffer, int start, int 
 //垂直线上移一位
 static void BufferCanvas::shiftVerticalLineUp(byte *buffer, int start, int end, bool circular)
 {
+
+    int lowBitOfHeadByte = bitRead(buffer[end], 0); //获取尾字节的最低位bit
+
+    for (int i = end; i >= start; i--)
+    {
+        buffer[i] >>= 1; //当前字节右移一位
+        if (i != start)
+        {
+            int lowBitOfNextByte = 0;
+            lowBitOfNextByte = bitRead(buffer[i - 1], 0); //获取上一个字节的最低位bit
+            bitWrite(buffer[i], 7, lowBitOfNextByte);     //把获取到的下一个字节高位覆盖到当前字节的最低位
+        }
+    }
+
+    bitWrite(buffer[start], 7, lowBitOfHeadByte);
 }
 
 //垂直线下移一位
 static void BufferCanvas::shiftVerticalLineDown(byte *buffer, int start, int end, bool circular)
 {
-    
 }
 
 static void BufferCanvas::shiftBufferLeft(byte *buffer, int size, int distance, int bytesNumberEachLine, bool circular)
@@ -92,7 +106,7 @@ static void BufferCanvas::shiftBufferUp(byte *buffer, int size, int distance, in
         {
             int start = 0 + i;
             int end = 7 + i;
-            shiftLineUp(buffer, start, end, circular);
+            shiftVerticalLineUp(buffer, start, end, circular);
         }
     }
 }
@@ -105,7 +119,7 @@ static void BufferCanvas::shiftBufferDown(byte *buffer, int size, int distance, 
         {
             int start = 0 + i;
             int end = 7 + i;
-            shiftLineDown(buffer, start, end, circular);
+            shiftVerticalLineDown(buffer, start, end, circular);
         }
     }
 }
@@ -192,6 +206,7 @@ void BufferCanvas::drawPixel(int x, int y)
 {
     setPixelState(x, y, 1);
 }
+
 void BufferCanvas::clearPixel(int x, int y)
 {
     setPixelState(x, y, 0);
