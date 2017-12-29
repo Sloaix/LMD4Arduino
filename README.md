@@ -1,3 +1,5 @@
+## still in developing.
+
 Arduino LED点阵驱动,目前支持HUB08接口,MAX7219芯片驱动即将到来。
 
 This is a "Led Matrix Driver" for arduino,supprted hub08 interface.max7219 driver is coming soon.
