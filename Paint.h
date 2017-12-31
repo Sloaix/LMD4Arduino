@@ -6,6 +6,7 @@ enum Style
 {
   FILL,
   CLEAR,
+  STROKE,
   OUTTER_STROKE,
   INNER_STORKE
 };
@@ -13,10 +14,13 @@ enum Style
 class Paint
 {
 private:
-  int thickness; //for stroke style
+  int color = 0xFF000000; //默认黑色不透明
+  int thickness;          //for stroke style
   Style style;
 
 public:
+  void setColor(int color);
+  int getColor();
   void setStyle(Style style);
   Style getStyle();
   void setThickness(int thickness);
